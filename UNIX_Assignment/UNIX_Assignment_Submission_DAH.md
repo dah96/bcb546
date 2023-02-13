@@ -45,12 +45,12 @@ join -1 1 -2 1 -t $'\t' snp_cut_sorted.txt maize_genotypes_sort.txt > maize_join
 sed 's/unknown/?/g' maize_joined.txt | sort -k3,3n > maize_q_sorted.txt
 awk '$2 ~ /1/' maize_q_sorted.txt > maize_q_chr1.txt
 ```
-Repeat for chr2-9
+Repeat for chr2-10
 ```
 sed 's/unknown/-/g' maize_joined.txt | sort -k 3 -r -n  > maize_-_sorted.txt
 awk '$2 ~ /1/' maize_-_sorted.txt > maize_-_chr1.txt
 ```
-Repeat for chr 2-9
+Repeat for chr 2-10
 ```
 grep -w "unknown" maize_joined.txt > maize_unknown.txt
 grep -w "multiple" maize_joined.txt > maize_multiple.txt
@@ -67,12 +67,12 @@ join -1 1 -2 1 -t $'\t' snp_cut_sorted.txt teosinte_genotypes_sort.txt > teosint
 sed 's/unknown/?/g' teosinte_joined.txt | sort -k3,3n > teosinte_q_sorted.txt
 awk '$2 ~ /1/' teosinte_q_sorted.txt > teosinte_q_chr1.txt
 ```
-Repeat for chr2-9
+Repeat for chr2-10
 ```
 sed 's/unknown/-/g' teosinte_joined.txt | sort -k 3 -r -n  > teosinte_-_sorted.txt
 awk '$2 ~ /1/' teosinte_-_sorted.txt > teosinte_-_chr1.txt
 ```
-Repeat for chr2-9
+Repeat for chr2-10
 ```
 grep -w "unknown" teosinte_joined.txt > teosinte_unknown.txt
 grep -w "multiple" teosinte_joined.txt > teosinte_multiple.txt
