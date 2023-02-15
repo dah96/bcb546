@@ -77,4 +77,4 @@ Repeat for chr2-10
 grep -w "unknown" teosinte_joined.txt > teosinte_unknown.txt
 grep -w "multiple" teosinte_joined.txt > teosinte_multiple.txt
 ```
-The header and all teosinte SNPs are then taken out of fang_et_al_genotypes.txt and transposed using the provided transpose.awk script. The header is then removed and the Sample_IDs are then sorted alphabetically to be the same as the SNP_IDs allowing for the 2 files to be joined together. The joined file is then used to produce the desired end files by replacing text as needed, sorting in forward or reverse order of positon, and pulling out each chromosome or unknown/multiple SNP locations.
+The header and all teosinte SNPs are then taken out of fang_et_al_genotypes.txt and transposed using the provided transpose.awk script. The header is then removed and the Sample_IDs are then sorted alphabetically to be the same as the SNP_IDs allowing for the teosonite genotypes and the snp_id files to be joined together. The joined file is then used to produce the desired end files by replacing text as needed, sorting in forward or reverse order of positon, and pulling out each chromosome or unknown/multiple SNP locations.
