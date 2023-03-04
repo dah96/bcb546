@@ -1,0 +1,35 @@
+---
+title: "R Assignment"
+author: "Dylan Harris"
+date: "2023-03-02"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Data Processing
+```{r}
+library(tidyverse)
+geno_test <- read_tsv(https://github.com/dah96/bcb546/raw/master/R_Assignment/fang_et_al_genotypes.txt)
+genotypes <- read_tsv("fang_et_al_genotypes.txt")
+snp_positions <- read_tsv("snp_position.txt")
+```
+Loaded the tidyverse package and loaded the two data files as dataframes in R.
+```{r}
+nrow(genotypes)
+ncol(genotypes)
+object.size(genotypes)
+```
+fang_et_al_genotypes.txt has 2782 rows, 986 columns, and is 23.1Mb in size.
+```{r}
+nrow(snp_positions)
+ncol(snp_positions)
+object.size(snp_positions)
+```
+snp_position.txt is 983 rows, 15 columns, and is 359kb is size.
+```{r}
+t_genotypes <- t(genotypes)
+```
+
