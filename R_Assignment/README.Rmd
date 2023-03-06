@@ -12,9 +12,8 @@ knitr::opts_chunk$set(echo = TRUE)
 # Data Processing
 ```{r}
 library(tidyverse)
-geno_test <- read_tsv(https://github.com/dah96/bcb546/raw/master/R_Assignment/fang_et_al_genotypes.txt)
-genotypes <- read_tsv("fang_et_al_genotypes.txt")
-snp_positions <- read_tsv("snp_position.txt")
+genotypes <- read_tsv("https://github.com/dah96/bcb546/raw/master/R_Assignment/fang_et_al_genotypes.txt")
+snp_positions <- read_tsv("https://github.com/dah96/bcb546/blob/master/R_Assignment/snp_position.txt")
 ```
 Loaded the tidyverse package and loaded the two data files as dataframes in R.
 ```{r}
