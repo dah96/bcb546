@@ -45,7 +45,7 @@ t_t_genotypes <-  t(teosinte_genotypes) %>%
 colnames(t_t_genotypes) <- t_t_genotypes[c(1),]
 t_t_genotypes <- t_t_genotypes[-c(1,2,3),]
 ```
-Transposes the maize genotypes, but doing so converts the dataframe into a matrix, which we turn back into a dataframe. The column names also need to be adjusted to the first row of the transposed data frame, then the superfluous rows are removed. Same process is repeated for teosinte genotypes.
+Transposes the maize genotypes, but doing so converts the data frame into a matrix, which we turn back into a data frame. The column names also need to be adjusted to the first row of the transposed data frame, then the superfluous rows are removed. Same process is repeated for teosinte genotypes.
 ```{r}
 snp_cut <- select(snp_positions, SNP_ID, Chromosome, Position)
 maize_joined <- bind_cols(snp_cut, t_m_genotypes)
@@ -53,12 +53,16 @@ teosinte_joined <-  bind_cols(snp_cut, t_t_genotypes)
 ```
 snp_positions is used to create a new dataframe only containing SNP_ID, Chromosome, and Positions columns which is then joined with the transposed maize and teosinte genotypes respectively.
 ```{r}
-maize_chr <- vector(length = 10)
-for (i in 1:10) {
-  maize_chr[[i]] <- filter(maize_joined, Chromosome == i) %>%
-    arrange(as.numeric(Position))
-}
-maize_chr[[1]] <- filter(maize_joined, Chromosome == 1) %>%
+#Almost working for loop, needs to be run as maize_chr[i] first then maize_chr[[i]],
+#makes a list of lists when done
+#maize_chr <- vector(length = 10)
+#for (i in 1:10) {
+#  maize_chr[[i]] <- filter(maize_joined, Chromosome == i) %>%
+#    arrange(as.numeric(Position))
+#}
+#maize_chr[[1]] <- filter(maize_joined, Chromosome == 1) %>%
+#  arrange(as.numeric(Position))
+maize_chr1 <- filter(maize_joined, Chromosome == 2) %>%
   arrange(as.numeric(Position))
 maize_chr2 <- filter(maize_joined, Chromosome == 2) %>%
   arrange(as.numeric(Position))
@@ -79,7 +83,7 @@ maize_chr9 <- filter(maize_joined, Chromosome == 9) %>%
 maize_chr10 <- filter(maize_joined, Chromosome == 10) %>%
   arrange(as.numeric(Position))
 ```
-Maize chromosomes pulled from joined dataframe via filter and arranged via numerical position.
+Maize chromosomes pulled from joined data frame via filter and arranged via numerical SNP  position.
 ```{r}
 maize_alt_joined <- data.frame(lapply(maize_joined, function(x) {
   gsub("[?]", "-", x)
@@ -96,6 +100,7 @@ maize_alt_chr9 <- filter(maize_alt_joined, Chromosome == 9) %>% arrange(desc(as.
 maize_alt_chr10 <- filter(maize_alt_joined, Chromosome == 10) %>% arrange(desc(as.numeric(Position)))
 ```
 
+Joined maize genotypes file had all "?" replaced with "-". Maize chromosomes are then pulled from the new alternative data frame and arranged in descending order of numerical SNP position.
 ```{r}
 teosinte_chr1 <- filter(teosinte_joined, Chromosome == 1) %>%
   arrange(as.numeric(Position))
@@ -118,15 +123,58 @@ teosinte_chr9 <- filter(teosinte_joined, Chromosome == 9) %>%
 teosinte_chr10 <- filter(teosinte_joined, Chromosome == 10) %>%
   arrange(as.numeric(Position))
 ```
+Teosinte chromosomes pulled from joined data frame via filter and arranged via numerical position.
 ```{r}
-teosinite_alt_joined <- data.frame(lapply(teosinte_joined, function(x) {
+teosinte_alt_joined <- data.frame(lapply(teosinte_joined, function(x) {
   gsub("[?]", "-", x)
 }))
-teosinte_chr10 <- filter(teosinte_joined, Chromosome == 10) %>%
+teosinte_alt_chr1 <- filter(teosinte_alt_joined, Chromosome == 1) %>%
   arrange(as.numeric(Position))
+teosinte_alt_chr2 <- filter(teosinte_alt_joined, Chromosome == 2) %>%
+  arrange(as.numeric(Position))
+teosinte_alt_chr3 <- filter(teosinte_alt_joined, Chromosome == 3) %>%
+  arrange(as.numeric(Position))
+teosinte_alt_chr4 <- filter(teosinte_alt_joined, Chromosome == 4) %>%
+  arrange(as.numeric(Position))
+teosinte_alt_chr5 <- filter(teosinte_alt_joined, Chromosome == 5) %>%
+  arrange(as.numeric(Position))
+teosinte_alt_chr6 <- filter(teosinte_alt_joined, Chromosome == 6) %>%
+  arrange(as.numeric(Position))
+teosinte_alt_chr7 <- filter(teosinte_alt_joined, Chromosome == 7) %>%
+  arrange(as.numeric(Position))
+teosinte_alt_chr8 <- filter(teosinte_alt_joined, Chromosome == 8) %>%
+  arrange(as.numeric(Position))
+teosinte_alt_chr9 <- filter(teosinte_alt_joined, Chromosome == 9) %>%
+  arrange(as.numeric(Position))
+teosinte_alt_chr10 <- filter(teosinte_alt_joined, Chromosome == 10) %>%
+  arrange(as.numeric(Position))
+
 ```
+Joined teosinte genotypes file had all "?" replaced with "-". Teosinte chromosomes are then pulled from the new alternative data frame and arranged in descending order of numerical SNP position.
 
 # Data Visualization
+
+```{r}
+t_teo_mai_genotypes <- filter(genotypes, Group %in% c("ZMMIL","ZMMLR","ZMMMR","ZMPBA","ZMPJA","ZMPIL")) %>% 
+  t() %>% 
+  data.frame()
+colnames(t_teo_mai_genotypes) <- t_teo_mai_genotypes[c(1),]
+t_teo_mai_genotypes <- t_teo_mai_genotypes[-c(1,2,3),]
+complete_join <- bind_cols(snp_cut, t_teo_mai_genotypes)
+```
+Created a teosinte + maize genotypes file to examine SNP position based on chromosome across both maize and teosinte.
+```{r}
+ggplot(data = complete_join) + geom_bar(mapping = aes(x=Chromosome, fill = Chromosome), show.legend = FALSE)
+```
+Bar Graph of number of SNPs per chromosome across both maize and teosinte genotypes.
+```{r}
+complete_join <- complete_join %>% 
+  mutate(Position.binned = cut(as.numeric(Position), 5));
+select(complete_join, Position.binned)
+ggplot(data = subset(complete_join, !is.na(Position.binned))) +
+  geom_bar(mapping = aes(x=Position.binned, fill = Chromosome))
+```
+Bar graph showing rough position of SNPs on each chromosome.
 
 ```{r}
 
