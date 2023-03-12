@@ -154,6 +154,8 @@ Joined teosinte genotypes file had all "?" replaced with "-". Teosinte chromosom
 
 # Data Visualization
 
+##SNPs per Chromosome
+
 ```{r}
 t_teo_mai_genotypes <- filter(genotypes, Group %in% c("ZMMIL","ZMMLR","ZMMMR","ZMPBA","ZMPJA","ZMPIL")) %>% 
   t() %>% 
@@ -161,12 +163,36 @@ t_teo_mai_genotypes <- filter(genotypes, Group %in% c("ZMMIL","ZMMLR","ZMMMR","Z
 colnames(t_teo_mai_genotypes) <- t_teo_mai_genotypes[c(1),]
 t_teo_mai_genotypes <- t_teo_mai_genotypes[-c(1,2,3),]
 complete_join <- bind_cols(snp_cut, t_teo_mai_genotypes)
+complete_join <- data.frame(lapply(complete_join, function(x) {
+  gsub("[?]", "-", x)
+}))
 ```
 Created a teosinte + maize genotypes file to examine SNP position based on chromosome across both maize and teosinte.
 ```{r}
-ggplot(data = complete_join) + geom_bar(mapping = aes(x=Chromosome, fill = Chromosome), show.legend = FALSE)
+ggplot(data = complete_join) + geom_bar(mapping = aes(x=(Chromosome), fill = Chromosome), show.legend = FALSE)
 ```
-Bar Graph of number of SNPs per chromosome across both maize and teosinte genotypes.
+Bar Graph of number of SNPs per chromosome across both maize and teosinte genotypes. Amount of SNPs per chromosome appears to decrease for the most apart as the chromosome number increases, exceptions being chromosome 5 and 7. This is likely related to the size of the chromosomes decreasing from 1 to 10.
+
+```{r}
+#Can't figure out how to do teosinte vs maize analysis at this point
+```
+
+##Missing data and amount of heterozygosity
+
+```{r}
+count_complete <- data.frame(table(unlist(complete_join[-c(1:3,2552)])))
+homozygous <- filter(count_complete, Var1 %in% c("A/A", "T/T", "C/C", "G/G"))
+heterozygous <- filter(count_complete, Var1 %in% c("A/C", "A/G", "A/T", "C/G", "C/T", "G/T"))
+missing <- filter(count_complete, Var1 == c("-/-"))
+heterozygosity <- data.frame(Heterozygosity = c("Homo", "Hetero", "Missing"), Count = c(sum(homozygous$Freq), sum(heterozygous$Freq), missing$Freq))
+ggplot(heterozygosity) +
+  geom_col(aes(x=Heterozygosity, y=Count, fill=Heterozygosity), show.legend = FALSE)
+#If you know a better way to do this please let me know
+```
+Bar graph comparing amount of heterozygous, homozygous, and missing sites. Homozygous sites are overwhelmingly dominant with heterozygous sites accounting for roughly 1/5 of the sites and missing data makes about 1/20 of the sites.
+
+##My own visualization
+
 ```{r}
 complete_join <- complete_join %>% 
   mutate(Position.binned = cut(as.numeric(Position), 5));
@@ -174,9 +200,4 @@ select(complete_join, Position.binned)
 ggplot(data = subset(complete_join, !is.na(Position.binned))) +
   geom_bar(mapping = aes(x=Position.binned, fill = Chromosome))
 ```
-Bar graph showing rough position of SNPs on each chromosome.
-
-```{r}
-
-```
-
+Bar graph showing rough position of SNPs on each chromosome with position being divided into 5 equal lengths. SNPs appear to be most common at the beginning and end of each chromosome.
