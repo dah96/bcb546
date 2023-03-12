@@ -88,16 +88,26 @@ Maize chromosomes pulled from joined data frame via filter and arranged via nume
 maize_alt_joined <- data.frame(lapply(maize_joined, function(x) {
   gsub("[?]", "-", x)
 }))
-maize_alt_chr1 <- filter(maize_alt_joined, Chromosome == 1) %>% arrange(desc(as.numeric(Position)))
-maize_alt_chr2 <- filter(maize_alt_joined, Chromosome == 2) %>% arrange(desc(as.numeric(Position)))
-maize_alt_chr3 <- filter(maize_alt_joined, Chromosome == 3) %>% arrange(desc(as.numeric(Position)))
-maize_alt_chr4 <- filter(maize_alt_joined, Chromosome == 4) %>% arrange(desc(as.numeric(Position)))
-maize_alt_chr5 <- filter(maize_alt_joined, Chromosome == 5) %>% arrange(desc(as.numeric(Position)))
-maize_alt_chr6 <- filter(maize_alt_joined, Chromosome == 6) %>% arrange(desc(as.numeric(Position)))
-maize_alt_chr7 <- filter(maize_alt_joined, Chromosome == 7) %>% arrange(desc(as.numeric(Position)))
-maize_alt_chr8 <- filter(maize_alt_joined, Chromosome == 8) %>% arrange(desc(as.numeric(Position)))
-maize_alt_chr9 <- filter(maize_alt_joined, Chromosome == 9) %>% arrange(desc(as.numeric(Position)))
-maize_alt_chr10 <- filter(maize_alt_joined, Chromosome == 10) %>% arrange(desc(as.numeric(Position)))
+maize_alt_chr1 <- filter(maize_alt_joined, Chromosome == 1) %>%
+  arrange(desc(as.numeric(Position)))
+maize_alt_chr2 <- filter(maize_alt_joined, Chromosome == 2) %>%
+  arrange(desc(as.numeric(Position)))
+maize_alt_chr3 <- filter(maize_alt_joined, Chromosome == 3) %>%
+  arrange(desc(as.numeric(Position)))
+maize_alt_chr4 <- filter(maize_alt_joined, Chromosome == 4) %>%
+  arrange(desc(as.numeric(Position)))
+maize_alt_chr5 <- filter(maize_alt_joined, Chromosome == 5) %>%
+  arrange(desc(as.numeric(Position)))
+maize_alt_chr6 <- filter(maize_alt_joined, Chromosome == 6) %>%
+  arrange(desc(as.numeric(Position)))
+maize_alt_chr7 <- filter(maize_alt_joined, Chromosome == 7) %>%
+  arrange(desc(as.numeric(Position)))
+maize_alt_chr8 <- filter(maize_alt_joined, Chromosome == 8) %>%
+  arrange(desc(as.numeric(Position)))
+maize_alt_chr9 <- filter(maize_alt_joined, Chromosome == 9) %>%
+  arrange(desc(as.numeric(Position)))
+maize_alt_chr10 <- filter(maize_alt_joined, Chromosome == 10) %>%
+  arrange(desc(as.numeric(Position)))
 ```
 
 Joined maize genotypes file had all "?" replaced with "-". Maize chromosomes are then pulled from the new alternative data frame and arranged in descending order of numerical SNP position.
@@ -157,6 +167,7 @@ Joined teosinte genotypes file had all "?" replaced with "-". Teosinte chromosom
 ##SNPs per Chromosome
 
 ```{r}
+#Editing data for downstream processing
 t_teo_mai_genotypes <- filter(genotypes, Group %in% c("ZMMIL","ZMMLR","ZMMMR","ZMPBA","ZMPJA","ZMPIL")) %>% 
   t() %>% 
   data.frame()
@@ -166,38 +177,61 @@ complete_join <- bind_cols(snp_cut, t_teo_mai_genotypes)
 complete_join <- data.frame(lapply(complete_join, function(x) {
   gsub("[?]", "-", x)
 }))
+complete_pivot <- pivot_longer(complete_join, cols = !1:3, names_to = "Sample_ID")
+names(complete_pivot)[names(complete_pivot) == "value"] <- "Genotype"
+complete_pivot$heterozygosity <- ifelse(complete_pivot$Genotype %in% c("A/A", "T/T", "G/G", "C/C"), "Homo",
+                                        ifelse(complete_pivot$Genotype == c("-/-"), "Missing", "Hetero"))
+complete_pivot$Position <- as.numeric(complete_pivot$Position)
+maize_pivot <- pivot_longer(maize_joined, cols = !1:3, names_to = "Sample_ID")
+names(maize_pivot)[names(maize_pivot) == "value"] <- "Genotype"
+maize_pivot$heterozygosity <- ifelse(maize_pivot$Genotype %in% c("A/A", "T/T", "G/G", "C/C"), "Homo",
+                                        ifelse(maize_pivot$Genotype == c("-/-"), "Missing", "Hetero"))
+maize_pivot$Position <- as.numeric(maize_pivot$Position)
+teosinte_pivot <- pivot_longer(teosinte_joined, cols = !1:3, names_to = "Sample_ID")
+names(teosinte_pivot)[names(teosinte_pivot) == "value"] <- "Genotype"
+teosinte_pivot$heterozygosity <- ifelse(teosinte_pivot$Genotype %in% c("A/A", "T/T", "G/G", "C/C"), "Homo",
+                                        ifelse(teosinte_pivot$Genotype == c("-/-"), "Missing", "Hetero"))
+teosinte_pivot$Position <- as.numeric(teosinte_pivot$Position)
 ```
-Created a teosinte + maize genotypes file to examine SNP position based on chromosome across both maize and teosinte.
+Created a teosinte + maize genotypes file to examine SNP position based on chromosome across both maize and teosinte. Pivoted complete, maize, and teosinte tables to put all genotype data in one column for easier analysis downstream and accurate number of total SNPs.
 ```{r}
-ggplot(data = complete_join) + geom_bar(mapping = aes(x=(Chromosome), fill = Chromosome), show.legend = FALSE)
+ggplot(data = complete_pivot) +
+  geom_bar(mapping = aes(x=(Chromosome), fill = Chromosome), show.legend = FALSE)
 ```
+
 Bar Graph of number of SNPs per chromosome across both maize and teosinte genotypes. Amount of SNPs per chromosome appears to decrease for the most apart as the chromosome number increases, exceptions being chromosome 5 and 7. This is likely related to the size of the chromosomes decreasing from 1 to 10.
 
 ```{r}
-#Can't figure out how to do teosinte vs maize analysis at this point
+ggplot(data = maize_pivot) +
+  geom_point(mapping = aes(x=Chromosome, y=Position), color = "purple") +
+  ggtitle("Maize SNPs by Chromosome")
+
+ggplot(data = teosinte_pivot) +
+  geom_point(mapping = aes(x=Chromosome, y=as.numeric(Position)), color = "green") +
+  ggtitle("Teosinte SNPs by Chromosome")
 ```
+
+Dot plots comparing SNPs distribution on chromosomes between maize and teosinte.
+
 
 ##Missing data and amount of heterozygosity
 
 ```{r}
-count_complete <- data.frame(table(unlist(complete_join[-c(1:3,2552)])))
-homozygous <- filter(count_complete, Var1 %in% c("A/A", "T/T", "C/C", "G/G"))
-heterozygous <- filter(count_complete, Var1 %in% c("A/C", "A/G", "A/T", "C/G", "C/T", "G/T"))
-missing <- filter(count_complete, Var1 == c("-/-"))
-heterozygosity <- data.frame(Heterozygosity = c("Homo", "Hetero", "Missing"), Count = c(sum(homozygous$Freq), sum(heterozygous$Freq), missing$Freq))
-ggplot(heterozygosity) +
-  geom_col(aes(x=Heterozygosity, y=Count, fill=Heterozygosity), show.legend = FALSE)
-#If you know a better way to do this please let me know
+ggplot(data = complete_pivot) +
+  geom_bar(mapping = aes(x = Chromosome, fill = heterozygosity), position = "fill")
 ```
-Bar graph comparing amount of heterozygous, homozygous, and missing sites. Homozygous sites are overwhelmingly dominant with heterozygous sites accounting for roughly 1/5 of the sites and missing data makes about 1/20 of the sites.
+
+Bar graph comparing amount of heterozygous, homozygous, and missing sites across chromosomes of both teosinte and maize.
 
 ##My own visualization
 
 ```{r}
-complete_join <- complete_join %>% 
-  mutate(Position.binned = cut(as.numeric(Position), 5));
-select(complete_join, Position.binned)
-ggplot(data = subset(complete_join, !is.na(Position.binned))) +
-  geom_bar(mapping = aes(x=Position.binned, fill = Chromosome))
+ggplot(data = maize_pivot) +
+  geom_bar(mapping = aes(x=Chromosome, fill=Genotype), position="fill") +
+  ggtitle("Maize Genotypes")
+ggplot(data = teosinte_pivot) +
+  geom_bar(mapping = aes(x=Chromosome, fill=Genotype), position="fill") +
+  ggtitle("Teosonite Genotypes")
 ```
-Bar graph showing rough position of SNPs on each chromosome with position being divided into 5 equal lengths. SNPs appear to be most common at the beginning and end of each chromosome.
+
+Bar graphs comparing proportions of each genotype with missing data across both maize and teosinte samples.
