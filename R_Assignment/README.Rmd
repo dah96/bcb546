@@ -62,7 +62,7 @@ snp_positions is used to create a new dataframe only containing SNP_ID, Chromoso
 #}
 #maize_chr[[1]] <- filter(maize_joined, Chromosome == 1) %>%
 #  arrange(as.numeric(Position))
-maize_chr1 <- filter(maize_joined, Chromosome == 2) %>%
+maize_chr1 <- filter(maize_joined, Chromosome == 1) %>%
   arrange(as.numeric(Position))
 maize_chr2 <- filter(maize_joined, Chromosome == 2) %>%
   arrange(as.numeric(Position))
