@@ -1,0 +1,17 @@
+---
+title: "Keller_Review"
+author: "Alex Keller"
+date: "2023-03-16"
+output: html_document
+---
+
+Everything looks good! Everything ran without issues upon clicking run. I only found the one thing, mentioned below. Great work!
+
+The first thing I've noticed is that in your first part of maize chr seperation, you are filtering chr 2 twice (see below)
+
+```{r}
+maize_chr1 <- filter(maize_joined, Chromosome == 2) %>%
+arrange(as.numeric(Position))
+maize_chr2 <- filter(maize_joined, Chromosome == 2) %>%
+arrange(as.numeric(Position))
+```
