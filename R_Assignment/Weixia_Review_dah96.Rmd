@@ -1,0 +1,11 @@
+---
+title: "Weixia_Review"
+author: "Weixia Deng"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Overall it looks good in both data processing and visualization. But there is one thing you could make your code more compact and readable is to use loops for chromosome 1 to 10 in data processing part. You may consider use `assign()` function to set variable names in a loop.
