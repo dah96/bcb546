@@ -207,11 +207,11 @@ ggplot(data = maize_pivot) +
   ggtitle("Maize SNPs by Chromosome")
 
 ggplot(data = teosinte_pivot) +
-  geom_point(mapping = aes(x=Chromosome, y=as.numeric(Position)), color = "green") +
+  geom_point(mapping = aes(x=Chromosome, y=Position), color = "green") +
   ggtitle("Teosinte SNPs by Chromosome")
 ```
 
-Dot plots comparing SNPs distribution on chromosomes between maize and teosinte.
+Dot plots comparing SNPs distribution on chromosomes between maize and teosinte. SNPs appear to be less common within the center of each chromosome.
 
 
 ##Missing data and amount of heterozygosity
@@ -221,7 +221,7 @@ ggplot(data = complete_pivot) +
   geom_bar(mapping = aes(x = Chromosome, fill = heterozygosity), position = "fill")
 ```
 
-Bar graph comparing amount of heterozygous, homozygous, and missing sites across chromosomes of both teosinte and maize.
+Bar graph comparing amount of heterozygous, homozygous, and missing sites across chromosomes of both teosinte and maize. Most sites are homozygous with about 12.5% being heterozygous and 5% being missing data across all chromosomes.
 
 ##My own visualization
 
@@ -234,4 +234,4 @@ ggplot(data = teosinte_pivot) +
   ggtitle("Teosonite Genotypes")
 ```
 
-Bar graphs comparing proportions of each genotype with missing data across both maize and teosinte samples.
+Bar graphs comparing proportions of each genotype with missing data across both maize and teosinte samples. Each chromosome appears to have a differing amount of GC content from each other across each chromosome. Maize individuals also seem to have more instances of heterozygosity in there chromosomes.
